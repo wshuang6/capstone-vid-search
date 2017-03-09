@@ -1,62 +1,73 @@
 //http://api-public.guidebox.com/v2/search?api_key=7ceacb5ffc481ff8aed9719a341cb2bda30df935
-/v2/shows
-/v2/movies
+
 const SEARCHURL = "http://api-public.guidebox.com/v2/search?";
 
 var state = {
-	netflixResults: [],
-	amazonResults: [],
-	huluResults: [],
-	totalNetflixResults: 0,
-	totalAmazonResults: 0,
-	totalHuluResults: 0,
+	searchResults: [],
+	totalResults: 0,
+	isNetflix: []
 }
 
-
-function getData(searchTerm, showOrMovie, callback, limitNo, provider){
+//Functions related to getting show information
+function getShow(searchTerm, callback){
   let searchQueryTerms = {
     api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
-    type: showOrMovie,
+    type: 'show',
     query: searchTerm,
-    limit: limitNo,
-    sources: provider
   };
   $.getJSON(SEARCHURL, searchQueryTerms, callback);
+
 }
 
-getData("high castle", "movie", stateNetflixData, "10", "netflix");
-getData("high castle", "movie", stateAmazonData, "10", "amazon_prime");
-getData("high castle", "movie", stateHuluData, "10", "hulu");
+getShow("Attack", showMovieData);
+
+getNetflixStatus(state);
+
+
 console.log(state);
-function stateNetflixData(data) {
-	state.netflixResults = [];
-	function extractData (data) {
-		state.netflixResults.push(data);
+function showMovieData(data) {
+	state.searchResults = [];
+	function extractData(data){
+		for(var i= 0; i<5; i++){
+			state.searchResults.push(data[i]);
+		}
 	}
-	data.results.forEach(extractData);
-	state.totalNetflixResults = data.total_results;
+	extractData(data.results);
+	state.totalResults = data.total_results;
+}
+// Functions related to determining if Netflix has show
+function netflixAPICall(showId, callback){
+	let netflixUrl = `http://api-public.guidebox.com/v2/shows/${showId}/episodes?`
+	let searchQueryTerms = {
+		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
+		sources: 'Netflix',
+	};
+	 $.getJSON(netflixUrl, searchQueryTerms, callback);
 }
 
-function stateAmazonData(data) {
-	state.amazonResults = [];
-	function extractData (data) {
-		state.amazonResults.push(data);
+function getNetflixStatus(state){
+	console.log(state.totalResults);
+	state.searchResults.forEach(netflixLoop);
+	function netflixLoop(data){
+		var getId = data.show_id;
+		console.log(getId);
+		function netflixTest(data){
+			if(data.total_results>0){
+				state.isNetflix.push(true);
+			}
+			else {
+				state.isNetflix.push(false);
+			}
+
+		}  							//checks if total results is > 0
+		netflixAPICall(getId, netflixTest);
 	}
-	data.results.forEach(extractData);
-	state.amazonResults = data.total_results;
+
 }
 
-function stateHuluData(data) {
-	state.huluResults = [];
-	function extractData (data) {
-		state.huluResults.push(data);
-	}
-	data.results.forEach(extractData);
-	state.huluResults = data.total_results;
-}
 
 function renderSearchResults (state) {
-	state.totalResults
+	state.totalResults;
 	state.searchResults.forEach(function (){
 
 	});
@@ -74,7 +85,7 @@ function renderSearchResults (state) {
 //SHOWS
 //"artwork_448x252": "http://static-api.guidebox.com/thumbnails_large/11166-6745653190-448x252.jpg",
 
-//render function in fact runs the getData as a callback
+//render function in fact runs the getShow as a callback
 
 
 //get stuff from api
