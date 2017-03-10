@@ -106,7 +106,7 @@ function renderResults(){ //will render html after state is settled, search is s
 		console.log(item.wikipedia_id);
 		console.log(item.imdb_id);
 		var year = item.first_aired.slice(0, 4);
-		showHtml += `<div class="indv-result"><img src="${item.artwork_304x171}">\
+		showHtml += `<div class="indv-result four columns"><img src="${item.artwork_304x171}">\
 		<p>${item.title} (${year})</p><p><a href="https://en.wikipedia.org/?curid=${item.wikipedia_id
 }">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p>\
 <p>Is it on Netflix? ${item.isNetflix}</p><p>Is it on Amazon Prime? ${item.isAmazon}</p></div>`;
