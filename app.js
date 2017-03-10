@@ -45,7 +45,7 @@ function netflixAPICall(URL, callback){
 
 function netflixTest(data){
 	if(data.total_results !== 0){
-		console.log(data.total_results);
+		//console.log(data.total_results);
 		state.isNetflix.push(data.results[0].show_id);
 	}
 }
@@ -67,7 +67,7 @@ function amazonAPICall(URL, callback){
 
 function amazonTest(data){
 	if(data.total_results !== 0){
-		console.log(data.total_results);
+		//console.log(data.total_results);
 		state.isAmazon.push(data.results[0].show_id);
 	}
 }
@@ -78,12 +78,14 @@ function getAmazonStatus(){
 	});
 }
 
-function renderResult(state){
+function renderResults(){
 	let show = state.searchResults
 	let showHtml ='';
 	show.forEach(function(item){
-		showHtml += `<div class="indv-result"><img src="${show.artwork_304x171}">\
-		<p>${show.title}</p><p>#{OVERVIEW}</p><p>#{WIKIPEDIA}</p><p>${ROTTEN}</p></div>`;
+		console.log(item.wikipedia_id);
+		showHtml += `<div class="indv-result"><img src="${item.artwork_304x171}">\
+		<p>${item.title}</p><p><a href="https://en.wikipedia.org/?curid=${item.wikipedia_id
+}">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p></div>`;
 	});
 	
 	$('.netflix').html(showHtml);
@@ -91,7 +93,20 @@ function renderResult(state){
 }
 
 
-getShow("Star%20Wars", showMovieData);
+function handleSubmit(){
+	$('.search-input-form').on('click', '.search-string', function(event){
+		event.preventDefault();
+		let search = $('.search-input').val();
+		getShow(search, showMovieData);
+		setTimeout(renderResults, 1100);
+	});
+}
+//Event Listeners
+$(function() {
+    handleSubmit();
+});
+
+//	getShow("Star%20Wars", showMovieData);
 setTimeout(getNetflixStatus, 1000);
 setTimeout(getAmazonStatus, 1000);
 setTimeout(logIt, 2000);
