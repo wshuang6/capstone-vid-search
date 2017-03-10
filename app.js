@@ -4,6 +4,7 @@ const SEARCHURL = "http://api-public.guidebox.com/v2/search?";
 
 var state = {
 	searchResults: [],
+	idResults: [],
 	totalResults: 0,
 	isNetflix: []
 }
@@ -16,62 +17,59 @@ function getShow(searchTerm, callback){
     query: searchTerm,
   };
   $.getJSON(SEARCHURL, searchQueryTerms, callback);
-
 }
 
-getShow("Attack", showMovieData);
-
-getNetflixStatus(state);
-
-
-console.log(state);
-function showMovieData(data) {
+function showMovieData(data) { //called by getShow as callback for getJSON. Pushes five results to searchResults
 	state.searchResults = [];
 	function extractData(data){
 		for(var i= 0; i<5; i++){
 			state.searchResults.push(data[i]);
+			state.idResults.push(data[i].id);
 		}
 	}
 	extractData(data.results);
 	state.totalResults = data.total_results;
 }
+
 // Functions related to determining if Netflix has show
-function netflixAPICall(showId, callback){
-	let netflixUrl = `http://api-public.guidebox.com/v2/shows/${showId}/episodes?`
+function netflixAPICall(URL, callback){
 	let searchQueryTerms = {
 		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
 		sources: 'Netflix',
 	};
-	 $.getJSON(netflixUrl, searchQueryTerms, callback);
+	 $.getJSON(URL, searchQueryTerms, callback);
 }
 
-function getNetflixStatus(state){
-	console.log(state.totalResults);
-	state.searchResults.forEach(netflixLoop);
-	function netflixLoop(data){
-		var getId = data.show_id;
-		console.log(getId);
-		function netflixTest(data){
-			if(data.total_results>0){
-				state.isNetflix.push(true);
-			}
-			else {
-				state.isNetflix.push(false);
-			}
-
-		}  							//checks if total results is > 0
-		netflixAPICall(getId, netflixTest);
+function netflixTest(data){
+	if(data.total_results !== 0){
+		console.log(data.total_results);
+		state.isNetflix.push(true);
 	}
-
+	else if (data.total_results === 0) {
+		console.log(data.total_results);
+		state.isNetflix.push(false);
+	}
 }
 
-
-function renderSearchResults (state) {
-	state.totalResults;
-	state.searchResults.forEach(function (){
-
-	});
+function getNetflixStatus(){
+	state.idResults.forEach(asdf);
+	function asdf (data) {
+		let netflixUrl = `http://api-public.guidebox.com/v2/shows/${data}/episodes?`;
+		console.log(netflixUrl);
+		netflixAPICall(netflixUrl, netflixTest);
+	}
 }
+
+getShow("Attack", showMovieData);
+setTimeout(getNetflixStatus, 1000);
+setTimeout(logIt, 2000);
+function logIt () {console.log(state)};
+// function renderSearchResults (state) {
+// 	state.totalResults;
+// 	state.searchResults.forEach(function (){
+
+// 	});
+// }
 //data.total_results maybe interesting!
 
 //RESULTS IS AN ARRAY -> forEach (let's say data is the parameter)
