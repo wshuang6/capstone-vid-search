@@ -11,6 +11,19 @@ var state = {
 }
 
 //Functions related to getting show information
+function isNull(website, str){
+	if(str != null){
+		if(website === 'wiki'){
+			return `<p><a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a></p>`;
+		}
+		else if(website === 'imdb'){
+			return  `<p><a href="http://www.imdb.com/title/${str}">IMDB Link</a></p>`;
+		}
+	}
+	else{
+		return '';
+	}
+}
 function getShow(searchTerm, callback){ //calls showMovieData, makes API call
   let searchQueryTerms = {
     api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
@@ -103,34 +116,39 @@ function renderResults(){ //will render html after state is settled, search is s
 	let show = state.searchResults
 	let showHtml ='';
 	show.forEach(function(item){
-		console.log(item.wikipedia_id);
-		console.log(item.imdb_id);
+		let wikiLink = item.wikipedia_id;
+		let imdbLink = item.imdb_id;
+		console.log(wikiLink);
+		console.log(wikiLink);
 		var year = item.first_aired.slice(0, 4);
 		showHtml += `<div class="indv-result four columns"><img src="${item.artwork_304x171}">\
-		<p>${item.title} (${year})</p><p><a href="https://en.wikipedia.org/?curid=${item.wikipedia_id
-}">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p>\
+		<p>${item.title} (${year})</p>${isNull('wiki', wikiLink)}${isNull('imdb', imdbLink)}\
 <p>Is it on Netflix? ${item.isNetflix}</p><p>Is it on Amazon Prime? ${item.isAmazon}</p></div>`;
 	});
 	$('.netflix').html(showHtml);
 }
+$(function() {
+	    $('.search-input-form').on('click', '.search-string', function(event){ //event listener
+		event.preventDefault();
+		let search = $('.search-input').val();
+		getShow(search, showMovieData);
+		setTimeout(getNetflixStatus, 1500); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
+		setTimeout(getAmazonStatus, 1500);
+		setTimeout(isItInAmazon, 3000);
+		setTimeout(isItInNetflix, 3000);
+		setTimeout(renderResults, 3300);
+		setTimeout(logIt, 3400);
+	})
+});
 
-$('.search-input-form').on('click', '.search-string', function(event){ //event listener
-	event.preventDefault();
-	let search = $('.search-input').val();
-	getShow(search, showMovieData);
-	setTimeout(getNetflixStatus, 1500); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
-	setTimeout(getAmazonStatus, 1500);
-	setTimeout(isItInAmazon, 3000);
-	setTimeout(isItInNetflix, 3000);
-	setTimeout(renderResults, 3300);
-	setTimeout(logIt, 3400);
-})
 
 
 // getShow("stranger", showMovieData);
 
 
 function logIt () {console.log(state)};
+
+
 
 //RESULTS IS AN ARRAY -> forEach (let's say data is the parameter)
 //data.title
