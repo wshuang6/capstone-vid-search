@@ -6,7 +6,8 @@ var state = {
 	searchResults: [],
 	idResults: [],
 	totalResults: 0,
-	isNetflix: []
+	isNetflix: [],
+	isAmazon: []
 }
 
 //Functions related to getting show information
@@ -22,9 +23,11 @@ function getShow(searchTerm, callback){
 function showMovieData(data) { //called by getShow as callback for getJSON. Pushes five results to searchResults
 	state.searchResults = [];
 	function extractData(data){
-		for(var i= 0; i<5; i++){
+		for(var i= 0; i<10; i++){
+			if (data[i] !==undefined) {
 			state.searchResults.push(data[i]);
 			state.idResults.push(`http://api-public.guidebox.com/v2/shows/${data[i].id}/episodes?`);
+		}
 		}
 	}
 	extractData(data.results);
@@ -45,10 +48,6 @@ function netflixTest(data){
 		console.log(data.total_results);
 		state.isNetflix.push(data.results[0].show_id);
 	}
-	// else if (data.total_results === 0) {
-	// 	console.log(data.total_results);
-	// 	state.isNetflix.push(data.results);
-	// }
 }
 
 function getNetflixStatus(){
@@ -58,8 +57,31 @@ function getNetflixStatus(){
 	}
 }
 
-getShow("Attack", showMovieData);
+function amazonAPICall(URL, callback){
+	let searchQueryTerms = {
+		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
+		sources: 'amazon_prime',
+	};
+	$.getJSON(URL, searchQueryTerms, callback);
+}
+
+function amazonTest(data){
+	if(data.total_results !== 0){
+		console.log(data.total_results);
+		state.isAmazon.push(data.results[0].show_id);
+	}
+}
+
+function getAmazonStatus(){
+	state.idResults.forEach(asdf);
+	function asdf (data) {
+		amazonAPICall(data, amazonTest);
+	}
+}
+
+getShow("Star%20Wars", showMovieData);
 setTimeout(getNetflixStatus, 1000);
+setTimeout(getAmazonStatus, 1500);
 setTimeout(logIt, 3000);
 function logIt () {console.log(state)};
 // function renderSearchResults (state) {
