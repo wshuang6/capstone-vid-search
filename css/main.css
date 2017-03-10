@@ -5,7 +5,8 @@ p{
 img{
 	border-radius: 5%;
 	border: 1px solid gray;
-	width: 80%;
+	width: 100%;
+	float:left;
 }
 .container{
 
@@ -13,10 +14,12 @@ img{
 }
 
 .row {
-	border: 1px solid black;
+	width: 800px;
+	/*border: 1px solid black;*/
 }
 
 .indv-result {
 	height: 20%;
-	border: 1px solid black;
+	/*border: 1px solid black;*/
+	margin-bottom: 50px;
 }
