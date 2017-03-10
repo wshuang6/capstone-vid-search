@@ -78,11 +78,25 @@ function getAmazonStatus(){
 	});
 }
 
+function renderResult(state){
+	let show = state.searchResults
+	let showHtml ='';
+	show.forEach(function(item){
+		showHtml += `<div class="indv-result"><img src="${show.artwork_304x171}">\
+		<p>${show.title}</p><p>#{OVERVIEW}</p><p>#{WIKIPEDIA}</p><p>${ROTTEN}</p></div>`;
+	});
+	
+	$('.netflix').html(showHtml);
+	return showHtml
+}
+
+
 getShow("Star%20Wars", showMovieData);
 setTimeout(getNetflixStatus, 1000);
 setTimeout(getAmazonStatus, 1000);
 setTimeout(logIt, 2000);
 function logIt () {console.log(state)};
+
 // function renderSearchResults (state) {
 // 	state.totalResults;
 // 	state.searchResults.forEach(function (){
