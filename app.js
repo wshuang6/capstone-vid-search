@@ -21,14 +21,14 @@ function getShow(searchTerm, callback){ //calls showMovieData, makes API call
   $.getJSON(SEARCHURL, searchQueryTerms, callback);
 }
 
-function showMovieData(data) { //called by getShow as callback for getJSON. Resets, gets up to 10 results to limit no. of API calls, pushes it to state 
+function showMovieData(data) { //called by getShow as callback for getJSON. Resets, gets up to 12 results to limit no. of API calls, pushes it to state 
 	state.searchResults = [];
 	state.idResults = [];
 	state.totalResults = 0;
 	state.isNetflix = [];
 	state.isAmazon = [];
 	function extractData(data){
-		for(var i= 0; i<10; i++){ //for loop instead of array method to limit to 10 results and limit no. of API calls
+		for(var i= 0; i<12; i++){ //for loop instead of array method to limit to 12 results and limit no. of API calls
 			if (data[i] !==undefined) {
 			state.searchResults.push(data[i]);
 			state.idResults.push(`http://api-public.guidebox.com/v2/shows/${data[i].id}/episodes?`); //url for getting episode info for show and thus netflix/amazon status
@@ -49,7 +49,6 @@ function netflixAPICall(URL, callback){ //API Call
 }
 function netflixTest(data){ //callback for above function, if more than one episode exists on netflix pushes the show id to state
 	if(data.total_results !== 0){ //pushes only show ids that exist. array index becomes asynchronous, hard to pass identifier to object
-		console.log(data.total_results);
 		state.isNetflix.push(data.results[0].show_id);
 	}
 }
@@ -106,30 +105,32 @@ function renderResults(){ //will render html after state is settled, search is s
 	show.forEach(function(item){
 		let wikiLink = item.wikipedia_id;
 		let imdbLink = item.imdb_id;
-		console.log(wikiLink);
-		console.log(wikiLink);
 		var year ="";
 		if (item.first_aired != undefined && item.first_aired != false && item.first_aired !=null) {
 			year = `(${item.first_aired.slice(0, 4)})`;
 		}
-		showHtml += `<div class="indv-result four columns"><img src="${item.artwork_304x171}">\
-		<p>${item.title} ${year}</p>${isWikiImdbNull('Wikipedia', wikiLink)}${isWikiImdbNull('IMDB', imdbLink)}\
-<p>Is it on Netflix? ${item.isNetflix}</p><p>Is it on Amazon Prime? ${item.isAmazon}</p></div>`;
+		showHtml += `<div class="indv-result"><img src="${item.artwork_304x171}">\
+		<p class="bold">${item.title} ${year}</p><p>${isWikiNull(wikiLink)}</p><p>${isImdbNull(imdbLink)}</p>\
+		<p>Is it on Netflix? ${item.isNetflix}</p><p>Is it on Amazon Prime? ${item.isAmazon}</p></div>`;
 	});
 	$('.search-results').html(showHtml);
 }
 
-function isWikiImdbNull(website, str){
+function isWikiNull(str){
 	if(str != null){
-		if(website === 'Wikipedia'){
-			return `<p><a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a></p>`;
+			return `<a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a>`;
 		}
-		else if(website === 'IMDB'){
-			return  `<p><a href="http://www.imdb.com/title/${str}">IMDB Link</a></p>`;
-		}
+	else {
+		return `No Wikipedia Link`;
 	}
-	else{
-		return `No ${website} link available`;
+}
+
+function isImdbNull(str){
+	if (str.length > 0){
+			return  `<a href="http://www.imdb.com/title/${str}">IMDB Link</a>`;
+		}
+	else {
+		return `No IMDB Link`;
 	}
 }
 
@@ -139,34 +140,14 @@ $(function() {
 		let search = $('.search-input').val();
 		if (/^[\w\-\s]+$/.test(search) && (/\d/.test(search) || /[A-Z]/i.test(search))) {
 			getShow(search, showMovieData);
-			setTimeout(getNetflixStatus, 1500); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
-			setTimeout(getAmazonStatus, 1500);
-			setTimeout(isItInAmazon, 3000);
-			setTimeout(isItInNetflix, 3000);
-			setTimeout(renderResults, 3300);
-			setTimeout(logIt, 3400);
+			setTimeout(getNetflixStatus, 2000); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
+			setTimeout(getAmazonStatus, 2000);
+			setTimeout(isItInAmazon, 4000);
+			setTimeout(isItInNetflix, 4000);
+			setTimeout(renderResults, 4100);
 		}
 		else {
 			alert('Please enter a valid search.')
 		}
 	})
 });
-
-
-
-// getShow("stranger", showMovieData);
-
-
-function logIt () {console.log(state)};
-
-
-
-//RESULTS IS AN ARRAY -> forEach (let's say data is the parameter)
-//data.title
-//data.first_aired //e.g. 2016-07-15
-//data.wikipedia_id
-
-//SHOWS
-//"artwork_448x252": "http://static-api.guidebox.com/thumbnails_large/11166-6745653190-448x252.jpg",
-
-	//render function in fact runs the getShow as a callback
