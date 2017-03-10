@@ -51,10 +51,10 @@ function netflixTest(data){
 }
 
 function getNetflixStatus(){
-	state.idResults.forEach(asdf);
-	function asdf (data) {
+	state.idResults.forEach(function (data) {
 		netflixAPICall(data, netflixTest);
-	}
+	});
+	
 }
 
 function amazonAPICall(URL, callback){
@@ -73,16 +73,15 @@ function amazonTest(data){
 }
 
 function getAmazonStatus(){
-	state.idResults.forEach(asdf);
-	function asdf (data) {
+	state.idResults.forEach(function asdf (data) {
 		amazonAPICall(data, amazonTest);
-	}
+	});
 }
 
 getShow("Star%20Wars", showMovieData);
 setTimeout(getNetflixStatus, 1000);
-setTimeout(getAmazonStatus, 1500);
-setTimeout(logIt, 3000);
+setTimeout(getAmazonStatus, 1000);
+setTimeout(logIt, 2000);
 function logIt () {console.log(state)};
 // function renderSearchResults (state) {
 // 	state.totalResults;
