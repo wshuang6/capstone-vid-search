@@ -20,11 +20,26 @@ function getShow(searchTerm, callback){
   $.getJSON(SEARCHURL, searchQueryTerms, callback);
 }
 
+function isItInNetflix(){
+	state.searchResults.forEach(test);
+	function test (data, i) {
+		if ((state.isNetflix.some(function(netflixId) {return netflixId===data.id})) === true) {
+			state.searchResults[i].isNetflix = "Yes";
+		}
+		else {
+			state.searchResults[i].isNetflix = "No";
+		}
+	}
+}
+
 function isItInAmazon(){
 	state.searchResults.forEach(test);
-	function test (data) {
+	function test (data, i) {
 		if ((state.isAmazon.some(function(amazonId) {return amazonId===data.id})) === true) {
-			console.log("Hi");
+			state.searchResults[i].isAmazon = "Yes";
+		}
+		else {
+			state.searchResults[i].isAmazon = "No";
 		}
 	}
 }
@@ -95,30 +110,27 @@ function renderResults(){
 		<p>${item.title}</p><p><a href="https://en.wikipedia.org/?curid=${item.wikipedia_id
 }">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p></div>`;
 	});
-	
 	$('.netflix').html(showHtml);
-	return showHtml
 }
-
-function handleSubmit(){
-	$('.search-input-form').on('click', '.search-string', function(event){
+//"Is it in Netflix? True:yes"
+$('.search-input-form').on('click', '.search-string', function(event){
 		event.preventDefault();
 		let search = $('.search-input').val();
 		getShow(search, showMovieData);
-		setTimeout(renderResults, 1100);
-	});
-}
+		setTimeout(getNetflixStatus, 1000);
+		setTimeout(getAmazonStatus, 1000);
+		setTimeout(isItInAmazon, 2000);
+		setTimeout(isItInNetflix, 2000);
+		setTimeout(renderResults, 2100);
+		setTimeout(logIt, 2100);
+	})
 
-//Event Listeners
-$(function() {
-    handleSubmit();
-});
+
+// Event Listeners
+
 
 // getShow("stranger", showMovieData);
-setTimeout(getNetflixStatus, 1000);
-setTimeout(getAmazonStatus, 1000);
-setTimeout(isItInAmazon, 2000);
-setTimeout(logIt, 2000);
+
 
 function logIt () {console.log(state)};
 
