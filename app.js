@@ -6,7 +6,8 @@ var state = {
 	searchResults: [],
 	idResults: [],
 	totalResults: 0,
-	isNetflix: []
+	isNetflix: [],
+	isAmazon: []
 }
 
 //Functions related to getting show information
@@ -22,9 +23,11 @@ function getShow(searchTerm, callback){
 function showMovieData(data) { //called by getShow as callback for getJSON. Pushes five results to searchResults
 	state.searchResults = [];
 	function extractData(data){
-		for(var i= 0; i<5; i++){
+		for(var i= 0; i<10; i++){
+			if (data[i] !==undefined) {
 			state.searchResults.push(data[i]);
-			state.idResults.push(data[i].id);
+			state.idResults.push(`http://api-public.guidebox.com/v2/shows/${data[i].id}/episodes?`);
+		}
 		}
 	}
 	extractData(data.results);
@@ -37,31 +40,47 @@ function netflixAPICall(URL, callback){
 		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
 		sources: 'Netflix',
 	};
-	 $.getJSON(URL, searchQueryTerms, callback);
+	$.getJSON(URL, searchQueryTerms, callback);
 }
 
 function netflixTest(data){
 	if(data.total_results !== 0){
 		console.log(data.total_results);
-		state.isNetflix.push(true);
-	}
-	else if (data.total_results === 0) {
-		console.log(data.total_results);
-		state.isNetflix.push(false);
+		state.isNetflix.push(data.results[0].show_id);
 	}
 }
 
 function getNetflixStatus(){
-	state.idResults.forEach(asdf);
-	function asdf (data) {
-		let netflixUrl = `http://api-public.guidebox.com/v2/shows/${data}/episodes?`;
-		console.log(netflixUrl);
-		netflixAPICall(netflixUrl, netflixTest);
+	state.idResults.forEach(function (data) {
+		netflixAPICall(data, netflixTest);
+	});
+	
+}
+
+function amazonAPICall(URL, callback){
+	let searchQueryTerms = {
+		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
+		sources: 'amazon_prime',
+	};
+	$.getJSON(URL, searchQueryTerms, callback);
+}
+
+function amazonTest(data){
+	if(data.total_results !== 0){
+		console.log(data.total_results);
+		state.isAmazon.push(data.results[0].show_id);
 	}
 }
 
-getShow("Attack", showMovieData);
+function getAmazonStatus(){
+	state.idResults.forEach(function asdf (data) {
+		amazonAPICall(data, amazonTest);
+	});
+}
+
+getShow("Star%20Wars", showMovieData);
 setTimeout(getNetflixStatus, 1000);
+setTimeout(getAmazonStatus, 1000);
 setTimeout(logIt, 2000);
 function logIt () {console.log(state)};
 // function renderSearchResults (state) {
