@@ -1,5 +1,3 @@
-//http://api-public.guidebox.com/v2/search?api_key=7ceacb5ffc481ff8aed9719a341cb2bda30df935
-
 const SEARCHURL = "http://api-public.guidebox.com/v2/search?";
 
 var state = {
@@ -11,7 +9,6 @@ var state = {
 }
 
 //Functions related to getting show information
-
 function getShow(searchTerm, callback){ //calls showMovieData, makes API call
   let searchQueryTerms = {
     api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
@@ -40,31 +37,38 @@ function showMovieData(data) { //called by getShow as callback for getJSON. Rese
 }
 
 // Functions related to determining if Netflix has show
-function netflixAPICall(URL, callback){ //API Call
+function netflixAPICall(URL, callback){ //API call
 	let searchQueryTerms = {
 		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
-		sources: 'Netflix',
+		sources: 'netflix',
 	};
-	$.getJSON(URL, searchQueryTerms, callback);
+	$.getJSON(URL, searchQueryTerms, function (data) {//callback for above function, if more than one episode exists on netflix pushes the show id to state
+		if(data.total_results !== 0){
+			state.isNetflix.push(data.results[0].show_id);
+		}
+		callback(); //callback hell
+	});
 }
-function netflixTest(data){ //callback for above function, if more than one episode exists on netflix pushes the show id to state
-	if(data.total_results !== 0){ //pushes only show ids that exist. array index becomes asynchronous, hard to pass identifier to object
-		state.isNetflix.push(data.results[0].show_id);
-	}
-}
-function getNetflixStatus(){ //runs API call/callback for every show in the state
+function getNetflixStatus(callback){ //runs API call/callback for every show in the state
+	let responses = 0;
 	state.idResults.forEach(function (data) {
-		netflixAPICall(data, netflixTest);
+		netflixAPICall(data, function(){
+			responses++;
+			if (responses === state.idResults.length) {
+				callback(); //callback hell
+			}
+		});
 	});
 }
 function isItInNetflix(){ //marks whether show is in netflix or not
 	state.searchResults.forEach(test);
 	function test (data, i) {
+		var resultsGoHere = state.searchResults[i];
 		if ((state.isNetflix.some(function(netflixId) {return netflixId===data.id})) === true) {
-			state.searchResults[i].isNetflix = "Yes";
+			resultsGoHere.isNetflix = "Yes";
 		}
 		else {
-			state.searchResults[i].isNetflix = "No";
+			resultsGoHere.isNetflix = "No";
 		}
 	}
 }
@@ -75,26 +79,33 @@ function amazonAPICall(URL, callback){ //API call
 		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
 		sources: 'amazon_prime',
 	};
-	$.getJSON(URL, searchQueryTerms, callback);
+	$.getJSON(URL, searchQueryTerms, function (data) {//callback for above function, if more than one episode exists on netflix pushes the show id to state
+		if(data.total_results !== 0){
+			state.isAmazon.push(data.results[0].show_id);
+		}
+		callback(); //callback hell
+	});
 }
-function amazonTest(data){ //callback for above function, if more than one episode exists on netflix pushes the show id to state
-	if(data.total_results !== 0){
-		state.isAmazon.push(data.results[0].show_id);
-	}
-}
-function getAmazonStatus(){ //runs API call/callback for every show in the state
+function getAmazonStatus(callback){ //runs API call/callback for every show in the state
+	let responses = 0;
 	state.idResults.forEach(function (data) {
-		amazonAPICall(data, amazonTest);
+		amazonAPICall(data, function(){
+			responses++;
+			if (responses === state.idResults.length) {
+				callback(); //callback hell
+			}
+		});
 	});
 }
 function isItInAmazon(){ //marks whether show is in Amazon or not
 	state.searchResults.forEach(test);
 	function test (data, i) {
+		var resultsGoHere = state.searchResults[i];
 		if ((state.isAmazon.some(function(amazonId) {return amazonId===data.id})) === true) {
-			state.searchResults[i].isAmazon = "Yes";
+			resultsGoHere.isAmazon = "Yes";
 		}
 		else {
-			state.searchResults[i].isAmazon = "No";
+			resultsGoHere.isAmazon = "No";
 		}
 	}
 }
@@ -139,12 +150,16 @@ $(function() {
 		event.preventDefault();
 		let search = $('.search-input').val();
 		if (/^[\w\-\s]+$/.test(search) && (/\d/.test(search) || /[A-Z]/i.test(search))) {
-			getShow(search, showMovieData);
-			setTimeout(getNetflixStatus, 2000); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
-			setTimeout(getAmazonStatus, 2000);
-			setTimeout(isItInAmazon, 4000);
-			setTimeout(isItInNetflix, 4000);
-			setTimeout(renderResults, 4100);
+			getShow(search, function(data){ //callback hell
+				showMovieData(data);
+				getNetflixStatus(function() {
+					isItInNetflix();
+					getAmazonStatus(function () {
+						isItInAmazon();
+						renderResults();
+					});
+				});
+			});
 		}
 		else {
 			alert('Please enter a valid search.')
