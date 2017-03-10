@@ -20,6 +20,16 @@ function getShow(searchTerm, callback){
   $.getJSON(SEARCHURL, searchQueryTerms, callback);
 }
 
+function isItInAmazon(){
+	state.searchResults.forEach(test);
+	function test (data) {
+		if ((state.isAmazon.some(function(amazonId) {return amazonId===data.id})) === true) {
+			console.log("Hi");
+		}
+	}
+}
+
+
 function showMovieData(data) { //called by getShow as callback for getJSON. Pushes five results to searchResults
 	state.searchResults = [];
 	function extractData(data){
@@ -45,7 +55,7 @@ function netflixAPICall(URL, callback){
 
 function netflixTest(data){
 	if(data.total_results !== 0){
-		//console.log(data.total_results);
+		console.log(data.total_results);
 		state.isNetflix.push(data.results[0].show_id);
 	}
 }
@@ -54,7 +64,6 @@ function getNetflixStatus(){
 	state.idResults.forEach(function (data) {
 		netflixAPICall(data, netflixTest);
 	});
-	
 }
 
 function amazonAPICall(URL, callback){
@@ -67,7 +76,6 @@ function amazonAPICall(URL, callback){
 
 function amazonTest(data){
 	if(data.total_results !== 0){
-		//console.log(data.total_results);
 		state.isAmazon.push(data.results[0].show_id);
 	}
 }
@@ -92,7 +100,6 @@ function renderResults(){
 	return showHtml
 }
 
-
 function handleSubmit(){
 	$('.search-input-form').on('click', '.search-string', function(event){
 		event.preventDefault();
@@ -101,15 +108,18 @@ function handleSubmit(){
 		setTimeout(renderResults, 1100);
 	});
 }
+
 //Event Listeners
 $(function() {
     handleSubmit();
 });
 
-//	getShow("Star%20Wars", showMovieData);
+// getShow("stranger", showMovieData);
 setTimeout(getNetflixStatus, 1000);
 setTimeout(getAmazonStatus, 1000);
+setTimeout(isItInAmazon, 2000);
 setTimeout(logIt, 2000);
+
 function logIt () {console.log(state)};
 
 // function renderSearchResults (state) {
