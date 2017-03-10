@@ -11,19 +11,7 @@ var state = {
 }
 
 //Functions related to getting show information
-function isNull(website, str){
-	if(str != null){
-		if(website === 'wiki'){
-			return `<p><a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a></p>`;
-		}
-		else if(website === 'imdb'){
-			return  `<p><a href="http://www.imdb.com/title/${str}">IMDB Link</a></p>`;
-		}
-	}
-	else{
-		return '';
-	}
-}
+
 function getShow(searchTerm, callback){ //calls showMovieData, makes API call
   let searchQueryTerms = {
     api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
@@ -120,24 +108,47 @@ function renderResults(){ //will render html after state is settled, search is s
 		let imdbLink = item.imdb_id;
 		console.log(wikiLink);
 		console.log(wikiLink);
-		var year = item.first_aired.slice(0, 4);
+		var year ="";
+		if (item.first_aired != undefined && item.first_aired != false && item.first_aired !=null) {
+			year = `(${item.first_aired.slice(0, 4)})`;
+		}
 		showHtml += `<div class="indv-result four columns"><img src="${item.artwork_304x171}">\
-		<p>${item.title} (${year})</p>${isNull('wiki', wikiLink)}${isNull('imdb', imdbLink)}\
+		<p>${item.title} ${year}</p>${isWikiImdbNull('Wikipedia', wikiLink)}${isWikiImdbNull('IMDB', imdbLink)}\
 <p>Is it on Netflix? ${item.isNetflix}</p><p>Is it on Amazon Prime? ${item.isAmazon}</p></div>`;
 	});
-	$('.netflix').html(showHtml);
+	$('.search-results').html(showHtml);
 }
+
+function isWikiImdbNull(website, str){
+	if(str != null){
+		if(website === 'Wikipedia'){
+			return `<p><a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a></p>`;
+		}
+		else if(website === 'IMDB'){
+			return  `<p><a href="http://www.imdb.com/title/${str}">IMDB Link</a></p>`;
+		}
+	}
+	else{
+		return `No ${website} link available`;
+	}
+}
+
 $(function() {
-	    $('.search-input-form').on('click', '.search-string', function(event){ //event listener
+	$('.search-input-form').on('click', '.search-string', function(event){ //event listener
 		event.preventDefault();
 		let search = $('.search-input').val();
-		getShow(search, showMovieData);
-		setTimeout(getNetflixStatus, 1500); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
-		setTimeout(getAmazonStatus, 1500);
-		setTimeout(isItInAmazon, 3000);
-		setTimeout(isItInNetflix, 3000);
-		setTimeout(renderResults, 3300);
-		setTimeout(logIt, 3400);
+		if (/^[\w\-\s]+$/.test(search) && (/\d/.test(search) || /[A-Z]/i.test(search))) {
+			getShow(search, showMovieData);
+			setTimeout(getNetflixStatus, 1500); //unclear how long API call takes, sometimes 1200 ms does not appear like enough
+			setTimeout(getAmazonStatus, 1500);
+			setTimeout(isItInAmazon, 3000);
+			setTimeout(isItInNetflix, 3000);
+			setTimeout(renderResults, 3300);
+			setTimeout(logIt, 3400);
+		}
+		else {
+			alert('Please enter a valid search.')
+		}
 	})
 });
 
