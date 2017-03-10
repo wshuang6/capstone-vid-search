@@ -45,8 +45,12 @@ function isItInAmazon(){
 }
 
 
-function showMovieData(data) { //called by getShow as callback for getJSON. Pushes five results to searchResults
+function showMovieData(data) { //called by getShow as callback for getJSON. Pushes ten results to searchResults
 	state.searchResults = [];
+	state.idResults = [];
+	state.totalResults = 0;
+	state.isNetflix = [];
+	state.isAmazon = [];
 	function extractData(data){
 		for(var i= 0; i<10; i++){
 			if (data[i] !==undefined) {
@@ -109,22 +113,22 @@ function renderResults(){
 		showHtml += `<div class="indv-result"><img src="${item.artwork_304x171}">\
 		<p>${item.title}</p><p><a href="https://en.wikipedia.org/?curid=${item.wikipedia_id
 }">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p>\
-<p>Is it on Netflix: ${item.isNetflix}</p></div>`;
+<p>Is it on Netflix? ${item.isNetflix}</p><p>Is it on Amazon Prime? ${item.isAmazon}</p></div>`;
 	});
 	$('.netflix').html(showHtml);
 }
-//"Is it in Netflix? True:yes"
+
 $('.search-input-form').on('click', '.search-string', function(event){
 		event.preventDefault();
 		let search = $('.search-input').val();
 		getShow(search, showMovieData);
-		setTimeout(getNetflixStatus, 1000);
-		setTimeout(getAmazonStatus, 1000);
-		setTimeout(isItInAmazon, 2000);
-		setTimeout(isItInNetflix, 2000);
-		setTimeout(renderResults, 2100);
-		setTimeout(logIt, 2100);
-	})
+		setTimeout(getNetflixStatus, 1200);
+		setTimeout(getAmazonStatus, 1200);
+		setTimeout(isItInAmazon, 2400);
+		setTimeout(isItInNetflix, 2400);
+		setTimeout(renderResults, 2700);
+		setTimeout(logIt, 2800);
+})
 
 
 // Event Listeners
