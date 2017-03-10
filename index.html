@@ -1,26 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>thinkful tube</title>
-	<link rel="stylesheet" type="text/css" href="main.css">
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Cross-provider video content search tool</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<!--   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <body>
-	<form class="search-input-form">
-		<input type="text" class="search-input" name="search">
-		<button class="search-string">
-			<span>Search youtube</span>
-		</button>
-	</form>
-	<button class="prev-page"><span>Prev Page</button></span>
-	<button class="next-page"><span>Next Page</button></span>
-	<div class="search-results"></div>
-	<div id="lightbox">
-		<div id="video-embed">
-			
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <div class="row">
+    	<h3>The Netflix-Hulu-Amazon App</h3>
+      <div class="one-half column" style="margin-top: 10%">
+			  <form class="search-input-form">
+					<input type="text" class="search-input" name="search">
+					<button class="search-string">
+						<span>Search!</span>
+					</button>
+				</form>
+      </div>
+    </div>
+    <div class="row">
+			<div class="search-results">
+				<div class="netflix">
+			<!-- SAMPLE SEARCH RESULT BELOW -->
+
+					<div class="indv-result">
+						<img src="http://static-api.guidebox.com/111615/thumbnails_xlarge/37760-6112872101-608x342-show-thumbnail.jpg">
+						<p>Movie Title</p>
+						<a href="http://static-api.guidebox.com/111615/thumbnails_xlarge/37760-6112872101-608x342-show-thumbnail.jpg"><p>Wikipedia</p></a>
+						<a href="http://static-api.guidebox.com/111615/thumbnails_xlarge/37760-6112872101-608x342-show-thumbnail.jpg"><p>Rotten Tomatoes</p></a>
+					</div>
+			<!-- END SAMPLE RESULT -->
+				</div>
+				<div class="amazon">
+				</div>
+				<div class="hulu">
+				</div>
+			</div>
 		</div>
-	</div>
-</body>
-	<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+  </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
 	<script type="text/javascript" src="app.js"></script>
-	
+
+</body>
 </html>
