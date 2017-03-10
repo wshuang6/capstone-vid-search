@@ -108,7 +108,8 @@ function renderResults(){
 		console.log(item.wikipedia_id);
 		showHtml += `<div class="indv-result"><img src="${item.artwork_304x171}">\
 		<p>${item.title}</p><p><a href="https://en.wikipedia.org/?curid=${item.wikipedia_id
-}">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p></div>`;
+}">Wikipedia Link</a></p><p><a href="http://www.imdb.com/title/${item.imdb_id}">IMDB</a></p>\
+<p>Is it on Netflix: ${item.isNetflix}</p></div>`;
 	});
 	$('.netflix').html(showHtml);
 }
