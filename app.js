@@ -1,13 +1,3 @@
-// authors: William Huang & Ramon Reyes
-// project: FlixZon
-// description: Queries tv shows availability on netflix & amazon
-// assignment: Thinkful Capstone I
-// date: 3.9.17
-/*------------------------------------------------------------*/
-
-// I) Create Object State
-/*------------------------------------------------------------*/
-
 const SEARCHURL = "http://api-public.guidebox.com/v2/search?";
 
 var state = {
@@ -18,11 +8,7 @@ var state = {
 	isAmazon: []
 }
 
-// II) State Modification
-/*------------------------------------------------------------*/
-// Functions related obtaining to getting show information
-// getShow, showMovieData followed by individual queries for both Netflix & Amazon
-
+//Functions related to getting show information
 function getShow(searchTerm, callback){ //calls showMovieData, makes API call
   let searchQueryTerms = {
     api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
@@ -50,9 +36,7 @@ function showMovieData(data) { //called by getShow as callback for getJSON. Rese
 	state.totalResults = data.total_results;
 }
 
-//--- Netflix ------------------------------------------
 // Functions related to determining if Netflix has show
-
 function netflixAPICall(URL, callback){ //API call
 	let searchQueryTerms = {
 		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
@@ -65,7 +49,6 @@ function netflixAPICall(URL, callback){ //API call
 		callback(); //callback hell
 	});
 }
-
 function getNetflixStatus(callback){ //runs API call/callback for every show in the state
 	let responses = 0;
 	state.idResults.forEach(function (data) {
@@ -77,7 +60,6 @@ function getNetflixStatus(callback){ //runs API call/callback for every show in 
 		});
 	});
 }
-
 function isItInNetflix(){ //marks whether show is in netflix or not
 	state.searchResults.forEach(test);
 	function test (data, i) {
@@ -91,9 +73,7 @@ function isItInNetflix(){ //marks whether show is in netflix or not
 	}
 }
 
-//--- Amazon ------------------------------------------
-// Functions related to determining if Amazon has show
-
+//Functions for determining if Amazon Prime has show
 function amazonAPICall(URL, callback){ //API call
 	let searchQueryTerms = {
 		api_key: '7ceacb5ffc481ff8aed9719a341cb2bda30df935',
@@ -106,7 +86,6 @@ function amazonAPICall(URL, callback){ //API call
 		callback(); //callback hell
 	});
 }
-
 function getAmazonStatus(callback){ //runs API call/callback for every show in the state
 	let responses = 0;
 	state.idResults.forEach(function (data) {
@@ -118,7 +97,6 @@ function getAmazonStatus(callback){ //runs API call/callback for every show in t
 		});
 	});
 }
-
 function isItInAmazon(){ //marks whether show is in Amazon or not
 	state.searchResults.forEach(test);
 	function test (data, i) {
@@ -131,10 +109,6 @@ function isItInAmazon(){ //marks whether show is in Amazon or not
 		}
 	}
 }
-
-// III) Rendering Object
-/*------------------------------------------------------------*/
-// Injects yes/no, wiki, imdb & link data into index.html
 
 function renderResults(){ //will render html after state is settled, search is submitted
 	let show = state.searchResults
@@ -155,7 +129,7 @@ function renderResults(){ //will render html after state is settled, search is s
 
 function isWikiNull(str){
 	if(str != null){
-		return `<a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a>`;
+			return `<a href="https://en.wikipedia.org/?curid=${str}">Wikipedia Link</a>`;
 		}
 	else {
 		return `No Wikipedia Link`;
@@ -164,16 +138,12 @@ function isWikiNull(str){
 
 function isImdbNull(str){
 	if (str.length > 0){
-		return  `<a href="http://www.imdb.com/title/${str}">IMDB Link</a>`;
+			return  `<a href="http://www.imdb.com/title/${str}">IMDB Link</a>`;
 		}
 	else {
 		return `No IMDB Link`;
 	}
 }
-
-// IV) Event Listeners
-/*------------------------------------------------------------*/
-// Listeners for click events, regex, and error alerts
 
 $(function() {
 	$('.search-input-form').on('click', '.search-string', function(event){ //event listener
@@ -184,9 +154,9 @@ $(function() {
 				showMovieData(data);
 				getNetflixStatus(function() {
 					isItInNetflix();
-				getAmazonStatus(function () {
-					isItInAmazon();
-					renderResults();
+					getAmazonStatus(function () {
+						isItInAmazon();
+						renderResults();
 					});
 				});
 			});
